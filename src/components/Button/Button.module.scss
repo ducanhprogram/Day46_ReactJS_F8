@@ -1,0 +1,30 @@
+.wrapper {
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    min-width: 120px;
+    min-height: 34px;
+    border: none; 
+    outline: none;
+    padding: 8px 16px;
+    background: #ccc;
+    color: inherit;
+    text-decoration: none;
+    user-select: none;
+}
+
+.primary {
+    background: orange;
+}
+
+.secondary {
+    background: yellowgreen;
+}
+
+.rounded {
+    border-radius: 99px;
+}
+
+.disabled {
+    opacity: 0.5;
+}
