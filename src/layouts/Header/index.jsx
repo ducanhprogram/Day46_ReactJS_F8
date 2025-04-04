@@ -25,6 +25,7 @@ const Header = () => {
                 }
             );
             const data = await response.json();
+
             if (response.ok && data.status === "success") {
                 localStorage.removeItem("token");
                 navigate("/");
@@ -44,14 +45,14 @@ const Header = () => {
                 <div>
                     <button
                         onClick={() => {
-                            navigate("/login");
+                            navigate("/login2");
                         }}
                     >
                         Đăng nhập
                     </button>
                     <button
                         onClick={() => {
-                            navigate("/register");
+                            navigate("/register2");
                         }}
                     >
                         Đăng ký

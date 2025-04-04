@@ -21,7 +21,8 @@ const Products = () => {
     useEffect(() => {
         async function handle() {
             const res = await productService.getAll();
-            setProducts(res.data);
+
+            setProducts(res.data.items);
         }
         handle();
     }, []);

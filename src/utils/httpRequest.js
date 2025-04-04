@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Navigate } from "react-router-dom";
+// import { Navigate } from "react-router-dom";
 
 //baseURL: Đường dẫn gốc của API
 
@@ -67,7 +67,7 @@ httpRequest.interceptors.response.use(
     (error) => {
         if (error.response && error.response.status === 401) {
             setToken(null); // Xóa token khi bị lỗi 401
-            Navigate("/login"); // Chuyển hướng về login
+            // Navigate("/login"); // Chuyển hướng về login
         }
         return Promise.reject(error);
     }

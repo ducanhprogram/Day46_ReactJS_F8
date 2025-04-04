@@ -11,7 +11,6 @@ const InputTextHookForm = ({ label, type = "text", name, error, ...rest }) => {
                 style={{
                     width: "100%",
                     padding: "8px",
-                    border: error ? "1px solid red" : "1px solid #ccc",
                 }}
             />
 

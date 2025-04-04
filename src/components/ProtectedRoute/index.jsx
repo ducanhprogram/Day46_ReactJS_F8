@@ -10,18 +10,24 @@ const ProtectedRoute = ({ children }) => {
     const [isLoading, setLoading] = useState(true);
 
     useEffect(() => {
-        // const token = localStorage.getItem("token");
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+            setLoading(false);
+            return; //Không gọi API nếu không có token
+        }
         setLoading(true);
 
         (async () => {
             try {
                 const data = await authService.getCurrentUser();
+                console.log(data);
                 setCurrentUser(data.user);
             } catch (error) {
                 console.error("Error fetching current user: ", error);
                 if (error.response?.status === 401) {
                     localStorage.removeItem("token");
-                    Navigate("/login");
+                    // Navigate("/login");
                 }
                 setCurrentUser(null);
             } finally {

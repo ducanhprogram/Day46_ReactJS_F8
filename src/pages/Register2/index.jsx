@@ -34,8 +34,8 @@ const Register2 = () => {
     //Tác họ và tên
     const splitFullName = (fullName) => {
         const nameParts = fullName.trim().split(" ");
-        const firstName = nameParts.pop();
-        const lastName = nameParts.join(" ");
+        const firstName = nameParts.pop() || "";
+        const lastName = nameParts.join(" ") || "";
         return { firstName, lastName };
     };
 
@@ -58,37 +58,35 @@ const Register2 = () => {
             navigate("/");
         } catch (error) {
             console.log(error);
-            if (error.response && error.response.data.message) {
-                const data = error.response.data;
-                console.log(data);
+            if (error.response && error.response.data) {
+                const errorData = error.response.data;
 
-                // Sử dụng setError để gán lỗi từ API vào form
-                if (data.message.email) {
+                // Xử lý các lỗi từ API
+                if (
+                    errorData.message.email?.[0].includes(
+                        "The email has already been taken"
+                    )
+                ) {
                     setError("email", {
                         type: "manual",
-                        message:
-                            "Email này đã được sử dụng. Vui lòng sử dụng email khác.",
+                        message: "Email đã tồn tại",
                     });
                 }
-                if (data.message.password) {
-                    setError("password", {
-                        type: "manual",
-                        message: "Mật khẩu phải có ít nhất 81 ký tự!!!",
-                    });
-                }
-                if (data.message.firstName) {
+                if (
+                    errorData.message.lastName?.[0].includes(
+                        "The last name field is required"
+                    )
+                ) {
                     setError("fullName", {
                         type: "manual",
-                        message: data.message.firstName[0],
-                    });
-                }
-                if (data.message.lastName) {
-                    setError("fullName", {
-                        type: "manual",
-                        message: data.message.lastName[0],
+                        message: "The last name field is required",
                     });
                 }
             } else {
+                setError("email", {
+                    type: "manual",
+                    message: "Đã có lỗi xảy ra, vui lòng thử lại sau",
+                });
                 console.error("Lỗi kết nối API:", error.message);
             }
         }

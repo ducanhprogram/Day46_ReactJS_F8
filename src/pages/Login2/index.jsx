@@ -7,18 +7,24 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import loginSchema from "@/utils/schema/loginSchema";
 import { useEffect } from "react";
 import authService from "@/services/authService";
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import useQuery from "@/hooks/useQuery";
+import config from "@/config";
+
+let timer;
 
 const Login2 = () => {
-    // const navigate = useNavigate();
-    // const query = useQuery();
+    const navigate = useNavigate();
+    const query = useQuery();
 
     //resolver: Là cầu đổi chuyển đổi giúp React Hook Form sử dụng thư viện validation bên ngoài (Yup)
     const {
         register,
         handleSubmit,
-        reset,
+        setError,
+        clearErrors,
         watch,
+        trigger,
         formState: { errors },
     } = useForm({
         defaultValues: {
@@ -29,18 +35,85 @@ const Login2 = () => {
     });
 
     const onSubmit = async (data) => {
-        //call API
-        const response = await authService.login2(data);
-        console.log(response);
+        const isValid = await trigger();
 
-        reset();
+        if (!isValid) {
+            return;
+        }
+        //call API
+        try {
+            const response = await authService.login2(data);
+            console.log(response);
+            console.log("Đăng nhập thành công: ", response);
+            alert("Đăng nhập thành công");
+
+            const continuePath = query.get("continue") || config.routes.home;
+            navigate(continuePath);
+        } catch (error) {
+            console.log(error);
+            if (error.response && error.response.data.message) {
+                const data = error.response.data;
+
+                console.log(data);
+                // Xử lý lỗi từ API
+                if (data.message) {
+                    setError("password", {
+                        type: "manual",
+                        message: "Email hoặc mật khẩu không đúng!",
+                    });
+                }
+            } else {
+                setError("email", {
+                    type: "manual",
+                    message: "Đã có lỗi xảy ra. Vui lòng thử lại sau.",
+                });
+            }
+        }
     };
 
     const emailValue = watch("email");
 
     useEffect(() => {
-        console.log(emailValue);
-    }, [emailValue]);
+        if (!emailValue) {
+            clearErrors("email");
+            return;
+        }
+
+        clearTimeout(timer);
+        timer = setTimeout(async () => {
+            const isValid = await trigger("email");
+
+            if (isValid) {
+                try {
+                    const exists = await authService.checkEmail(emailValue);
+                    //Nếu email chưa tồn tại
+                    if (!exists) {
+                        setError("email", {
+                            type: "manual",
+                            message: "Email không tồn tại",
+                        });
+                    } else {
+                        clearErrors("email");
+                    }
+                } catch (error) {
+                    if (error.response && error.response.status === 401) {
+                        setError("email", {
+                            type: "manual",
+                            message:
+                                "Email không hợp lệ hoặc không được phép. Vui lòng kiểm tra lại.",
+                        });
+                    } else {
+                        setError("email", {
+                            type: "manual",
+                            message:
+                                "Lỗi khi kiểm tra email. Vui lòng thử lại!",
+                        });
+                    }
+                }
+            }
+        }, 800);
+        return () => clearTimeout(timer);
+    }, [emailValue, setError, clearErrors, trigger]);
 
     return (
         <div
@@ -56,9 +129,6 @@ const Login2 = () => {
                     {...register("email")}
                 />
 
-                {/* {errors.email && (
-                    <p style={{ color: "red" }}>{errors.email.message}</p>
-                )} */}
                 <InputTextHookForm
                     label={"Mật khẩu"}
                     type="password"
