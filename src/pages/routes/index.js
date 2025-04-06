@@ -55,6 +55,12 @@ const routes = [
         protected: true,
     },
     {
+        path: config.routes.profileEdit,
+        component: Profile,
+        protected: true,
+    },
+
+    {
         path: config.routes.notFound,
         component: NotFound,
     },

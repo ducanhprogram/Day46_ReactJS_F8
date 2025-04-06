@@ -5,13 +5,11 @@ import InputTextHookForm from "@/components/InputText/InputTextHookForm";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import loginSchema from "@/utils/schema/loginSchema";
-import { useEffect } from "react";
+
 import authService from "@/services/authService";
 import { useNavigate } from "react-router-dom";
 import useQuery from "@/hooks/useQuery";
 import config from "@/config";
-
-let timer;
 
 const Login2 = () => {
     const navigate = useNavigate();
@@ -22,8 +20,7 @@ const Login2 = () => {
         register,
         handleSubmit,
         setError,
-        clearErrors,
-        watch,
+
         trigger,
         formState: { errors },
     } = useForm({
@@ -43,12 +40,17 @@ const Login2 = () => {
         //call API
         try {
             const response = await authService.login2(data);
-            console.log(response);
-            console.log("Đăng nhập thành công: ", response);
-            alert("Đăng nhập thành công");
+            // console.log(response);
+            // console.log("Đăng nhập thành công: ", response);
 
-            const continuePath = query.get("continue") || config.routes.home;
-            navigate(continuePath);
+            if (response.status === "success" && response.data.access_token) {
+                alert("Đăng nhập thành công");
+                const continuePath =
+                    query.get("continue") || config.routes.home;
+                navigate(continuePath);
+            }
+
+            throw new Error("Đăng nhập không thành công");
         } catch (error) {
             console.log(error);
             if (error.response && error.response.data.message) {
@@ -70,50 +72,6 @@ const Login2 = () => {
             }
         }
     };
-
-    const emailValue = watch("email");
-
-    useEffect(() => {
-        if (!emailValue) {
-            clearErrors("email");
-            return;
-        }
-
-        clearTimeout(timer);
-        timer = setTimeout(async () => {
-            const isValid = await trigger("email");
-
-            if (isValid) {
-                try {
-                    const exists = await authService.checkEmail(emailValue);
-                    //Nếu email chưa tồn tại
-                    if (!exists) {
-                        setError("email", {
-                            type: "manual",
-                            message: "Email không tồn tại",
-                        });
-                    } else {
-                        clearErrors("email");
-                    }
-                } catch (error) {
-                    if (error.response && error.response.status === 401) {
-                        setError("email", {
-                            type: "manual",
-                            message:
-                                "Email không hợp lệ hoặc không được phép. Vui lòng kiểm tra lại.",
-                        });
-                    } else {
-                        setError("email", {
-                            type: "manual",
-                            message:
-                                "Lỗi khi kiểm tra email. Vui lòng thử lại!",
-                        });
-                    }
-                }
-            }
-        }, 800);
-        return () => clearTimeout(timer);
-    }, [emailValue, setError, clearErrors, trigger]);
 
     return (
         <div

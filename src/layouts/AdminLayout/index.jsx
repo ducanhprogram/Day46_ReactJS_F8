@@ -1,19 +1,25 @@
-import { Outlet } from "react-router-dom";
+import config from "@/config";
+import useUser from "@/hooks/useUser";
+import { NavLink, Outlet } from "react-router-dom";
 
 const AdminLayout = () => {
+    const user = useUser();
+    console.log(user);
     return (
         <div className="wrapper">
             <h1>Admin Layout</h1>
             <nav>
                 <ul>
                     <li>
-                        <a href="/">Home</a>
+                        <NavLink to={config.routes.home}>Home</NavLink>
                     </li>
                     <li>
-                        <a href="/products">Products</a>
+                        <NavLink to={config.routes.products}>Products</NavLink>
                     </li>
                 </ul>
             </nav>
+
+            {user && <div>Xin chào, {user.firstName}</div>}
             <Outlet />
         </div>
     );

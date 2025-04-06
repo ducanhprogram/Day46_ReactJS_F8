@@ -1,3 +1,5 @@
+import authService from "@/services/authService";
+import { setToken } from "@/utils/httpRequest";
 import { useNavigate } from "react-router-dom";
 
 const Header = () => {
@@ -9,28 +11,21 @@ const Header = () => {
         if (!isConfirm) {
             return;
         }
+
         if (!token) {
             navigate("/");
             return;
         }
 
         try {
-            const response = await fetch(
-                `https://api01.f8team.dev/api/auth/logout`,
-                {
-                    method: "POST",
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
-            const data = await response.json();
+            const data = await authService.logout(token);
 
-            if (response.ok && data.status === "success") {
-                localStorage.removeItem("token");
+            console.log(data);
+            if (data.status === "success") {
+                setToken(null);
                 navigate("/");
             } else {
-                console.error("Đăng xuất thất bại: ", data.message);
+                console.error("Đăng xuất thất bại:", data.message);
             }
         } catch (error) {
             console.error(error);

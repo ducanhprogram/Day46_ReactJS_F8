@@ -8,7 +8,8 @@ const config = {
         products: "/products",
         productDetail: "/products/:slug",
         users: "/users",
-        profile: "/p/:username",
+        profile: "/profile/:username",
+        profileEdit: "/profile/:username/edit",
         notFound: "*",
     },
 };

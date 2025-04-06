@@ -1,5 +1,4 @@
 import * as httpRequest from "@/utils/httpRequest";
-import { Navigate } from "react-router-dom";
 
 export const getCurrentUser = async () => {
     const response = await httpRequest.get("/auth/me");
@@ -14,16 +13,23 @@ export const login = async (email, password) => {
 
 export const login2 = async (data) => {
     const response = await httpRequest.post("/auth/login", data);
-    console.log(response);
     httpRequest.setToken(response.data.access_token); // Lưu token sau khi đăng nhập
     return response;
 };
 
-export const logout = () => {
-    httpRequest.setToken(null); // Xóa token khi đăng xuất
-    Navigate("/login");
+export const logout = async () => {
+    try {
+        const token = localStorage.getItem("token");
+        if (token) {
+            httpRequest.setToken(token); // Đảm bảo token được set trước khi gọi API
+            const response = await httpRequest.post("/auth/logout");
+            return response;
+        }
+    } catch (error) {
+        console.error("Logout error:", error);
+        throw error;
+    }
 };
-
 ///auth/check-email?email=example@gmail.com
 // email là key.
 // example@gmail.com là value.
@@ -69,7 +75,8 @@ export const getUserProfile = async (username) => {
 
 export const updateUserProfile = async (username, data) => {
     const response = await httpRequest.put(`/users/${username}`, data);
-    return response.data;
+    console.log(response);
+    return response;
 };
 
 export default {

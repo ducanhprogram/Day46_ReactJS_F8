@@ -7,6 +7,8 @@ const ProductDetail = () => {
     const [product, isLoading] = useFetch(
         `https://api01.f8team.dev/api/products/${params.slug}`
     );
+
+    console.log(product.data);
     return (
         <div>
             <h1>Product Detail</h1>

@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 
-import config from "@/config";
 import { useEffect, useState } from "react";
 import userService from "@/services/userService";
 
@@ -18,7 +17,8 @@ const Users = () => {
         const fetchAPI = async () => {
             try {
                 const users = await userService.getAll();
-                setUsers(users);
+
+                setUsers(users.data);
             } catch (e) {
                 console.error(e.message);
             }
@@ -33,10 +33,8 @@ const Users = () => {
                 {users.map((user) => {
                     return (
                         <li key={user.id}>
-                            <Link
-                                to={`${config.routes.users}/${user.username}`}
-                            >
-                                {user.firstName}
+                            <Link to={`/profile/${user.username}`}>
+                                {user.firstName} {user.lastName}
                             </Link>
                         </li>
                     );

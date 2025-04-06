@@ -5,7 +5,7 @@ import { Route, Routes } from "react-router-dom";
 import ProtectedRoute from "../ProtectedRoute";
 import { Fragment } from "react";
 
-function AppRoutes() {
+function AppRoutes({ theme }) {
     return (
         <Routes>
             {routes.map((route) => {
@@ -20,12 +20,12 @@ function AppRoutes() {
                     : Fragment;
 
                 return (
-                    <Route key={route.path} element={<Layout />}>
+                    <Route key={route.path} element={<Layout theme={theme} />}>
                         <Route
                             path={route.path}
                             element={
                                 <RouteWrapper>
-                                    <Component />
+                                    <Component theme={theme} />
                                 </RouteWrapper>
                             }
                         />
