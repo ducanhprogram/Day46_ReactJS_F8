@@ -122,6 +122,11 @@ const ProfileEdit = () => {
 
     const onSubmit = async (data) => {
         try {
+            if (data.birthDate) {
+                const date = new Date(data.birthDate);
+                const month = date.getMonth() + 1;
+                data.birthDate = `${date.getFullYear()}-${month}-${date.getDate()}`;
+            }
             const payload = Object.fromEntries(
                 Object.entries(data).filter(([_, value]) => {
                     return (

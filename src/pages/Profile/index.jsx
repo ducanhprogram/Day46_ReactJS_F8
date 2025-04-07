@@ -1,8 +1,8 @@
 // src/components/Profile.jsx
 import { useEffect, useState } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import authService from "@/services/authService";
-import { toast, ToastContainer } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 
 const Profile = () => {
     const { username } = useParams();
