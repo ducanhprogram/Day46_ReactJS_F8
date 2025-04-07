@@ -53,7 +53,8 @@ const Register2 = () => {
 
         try {
             const response = await httpRequest.post("/auth/register", payload);
-            httpRequest.setToken(response.access_token);
+            console.log(response);
+            httpRequest.setToken(response.data.access_token);
             alert("Đăng ký thành công");
             navigate("/");
         } catch (error) {
@@ -98,6 +99,7 @@ const Register2 = () => {
     useEffect(() => {
         //Khi người dùng chưa nhập gì hoặc xóa hết
         if (!emailValue) {
+            clearErrors("email");
             return;
         }
         clearTimeout(timer);
@@ -108,6 +110,7 @@ const Register2 = () => {
                 //exists : true tức là email đã tồn tai, false là email chưa tồn tại
                 const exists = await authService.checkEmail(emailValue);
 
+                console.log(exists);
                 if (exists) {
                     setError("email", {
                         type: "manual",

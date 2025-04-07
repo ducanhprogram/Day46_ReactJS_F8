@@ -26,6 +26,7 @@ export const logout = async () => {
             return response;
         }
     } catch (error) {
+        httpRequest.setToken(null);
         console.error("Logout error:", error);
         throw error;
     }
@@ -48,7 +49,7 @@ export const checkEmail = async (email, excludeId = null) => {
         },
     });
     //response.exists   nếu là true đã tồn tại, false là email chưa tồn tại
-    return response.exists;
+    return response.data.exists;
 };
 
 export const checkPhone = async (phone, excludeId = null) => {
@@ -58,14 +59,16 @@ export const checkPhone = async (phone, excludeId = null) => {
             exclude_id: excludeId,
         },
     });
-    return response.exists;
+
+    console.log(response);
+    return response.data.exists;
 };
 
 export const checkUsername = async (username, excludeId = null) => {
     const response = await httpRequest.get("/auth/check-username", {
         params: { username, exclude_id: excludeId },
     });
-    return response.exists;
+    return response.data.exists;
 };
 
 export const getUserProfile = async (username) => {
